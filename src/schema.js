@@ -9,6 +9,23 @@ const typeDefs = gql`
     list: List!
   }
 
+  type Mutation {
+    addCatalogItem(input: CatalogInputItem!): AddCatalogItemResponse!
+  }
+
+  type AddCatalogItemResponse {
+    code: Int!
+    success: Boolean!
+    message: String!
+    catalog: [CatalogItem]
+  }
+
+  input CatalogInputItem {
+    name: String!
+    category: String!
+    defaultUnit: String
+  }
+
   type CatalogItem {
     name: String!
     category: String!

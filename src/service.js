@@ -38,9 +38,18 @@ async function getOrderedCatalog(field = "name", order = "asc") {
   return collection.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 }
 
+async function addItemToCatalog(item) {
+  const collection = await firestore.collection(collections.CATALOG).add(item);
+
+  await collection.get();
+
+  return await getOrderedCatalog();
+}
+
 module.exports = {
   getCollection,
   getDocument,
   getLatestList,
   getOrderedCatalog,
+  addItemToCatalog,
 };
