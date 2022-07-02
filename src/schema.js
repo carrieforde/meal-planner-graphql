@@ -1,16 +1,31 @@
-const { gql } = require('apollo-server');
+const { gql } = require("apollo-server");
 
 const typeDefs = gql`
-    type Query {
-        "Get catalog items"
-        catalog: [CatalogItem!]!
-    }
+  type Query {
+    "Get catalog items"
+    catalog: [CatalogItem!]!
 
-    type CatalogItem {
-        name: String!
-        category: String!
-        defaultUnit: String
-    }
-`
+    "Get a list of shopping items"
+    list: List!
+  }
 
-module.exports = typeDefs
+  type CatalogItem {
+    name: String!
+    category: String!
+    defaultUnit: String
+  }
+
+  type ListItem {
+    item: CatalogItem!
+    quantityNeeded: Int!
+    unit: String
+  }
+
+  type List {
+    items: [ListItem!]!
+    createdAt: String!
+    updatedAt: String!
+  }
+`;
+
+module.exports = typeDefs;
