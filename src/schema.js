@@ -11,6 +11,7 @@ const typeDefs = gql`
 
   type Mutation {
     addCatalogItem(input: CatalogInputItem!): AddCatalogItemResponse!
+    addItemToCart(itemId: String!): AddItemToCartResponse!
   }
 
   type AddCatalogItemResponse {
@@ -20,6 +21,13 @@ const typeDefs = gql`
     catalogItem: CatalogItem
   }
 
+  type AddItemToCartResponse {
+    code: Int!
+    success: Boolean!
+    message: String!
+    item: ListItem
+  }
+
   input CatalogInputItem {
     name: String!
     category: String!
@@ -27,7 +35,7 @@ const typeDefs = gql`
   }
 
   type CatalogItem {
-    id: String!
+    id: ID!
     name: String!
     category: String!
     defaultUnit: String
@@ -37,6 +45,7 @@ const typeDefs = gql`
     item: CatalogItem!
     quantityNeeded: Int!
     unit: String
+    inCart: Boolean
   }
 
   type List {

@@ -58,10 +58,24 @@ async function addItemToCatalog(item) {
   return { id: document.id, ...document.data() };
 }
 
+async function addItemToCart(itemId) {
+  const list = await getLatestList();
+  const items = list.items.map((listItem) =>
+    listItem.item === itemId ? { ...listItem, inCart: true } : listItem
+  );
+
+  await firestore.doc(`${collections.LISTS}/${list.id}`).update({ items });
+
+  const updatedList = await getLatestList();
+
+  return updatedList.items.find((listItem) => listItem.item === itemId);
+}
+
 module.exports = {
   getCollection,
   getDocument,
   getLatestList,
   getOrderedCatalog,
   addItemToCatalog,
+  addItemToCart,
 };

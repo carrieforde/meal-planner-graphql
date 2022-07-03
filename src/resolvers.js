@@ -3,6 +3,7 @@ const {
   getDocument,
   getOrderedCatalog,
   addItemToCatalog,
+  addItemToCart,
 } = require("./service");
 
 const resolvers = {
@@ -40,6 +41,25 @@ const resolvers = {
         };
       }
     },
+    addItemToCart: async (_, { itemId }) => {
+      try {
+        const result = await addItemToCart(itemId);
+
+        return {
+          code: 200,
+          success: true,
+          message: `Item successfully added to cart`,
+          item: { ...result },
+        };
+      } catch (err) {
+        return {
+          code: 403,
+          success: false,
+          message: `Error occurred while adding item to cart`,
+          item: null,
+        };
+      }
+    },
   },
   List: {
     items: async ({ items }) => {
@@ -49,13 +69,20 @@ const resolvers = {
 
       const result = await Promise.all(itemsToQuery);
 
-      const mappedResults = items.map(({ item, quantityNeeded, unit }) => {
-        const found = result.find((res) => res.id === item);
-
-        return { item: { ...found }, quantityNeeded, unit };
-      });
+      const mappedResults = items.map(
+        ({ item, quantityNeeded, unit, id, inCart }) => {
+          const found = result.find((res) => res.id === item);
+          return { id, item: found, quantityNeeded, unit, inCart };
+        }
+      );
 
       return mappedResults;
+    },
+  },
+  AddItemToCartResponse: {
+    item: async ({ item }) => {
+      const catalogItem = await getDocument("catalog", item.item);
+      return { ...item, item: catalogItem };
     },
   },
 };
