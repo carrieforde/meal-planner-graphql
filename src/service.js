@@ -39,11 +39,23 @@ async function getOrderedCatalog(field = "name", order = "asc") {
 }
 
 async function addItemToCatalog(item) {
+  const itemInCollection = await firestore
+    .collection(collections.CATALOG)
+    .where("name", "==", item.name)
+    .get();
+
+  const itemAlreadyInCatalog = !!itemInCollection.docs.find(
+    (doc) => doc.data().name === item.name
+  );
+
+  if (itemAlreadyInCatalog) {
+    throw new Error(`${item.name} already exists in catalog`);
+  }
+
   const collection = await firestore.collection(collections.CATALOG).add(item);
+  const document = await collection.get();
 
-  await collection.get();
-
-  return await getOrderedCatalog();
+  return { id: document.id, ...document.data() };
 }
 
 module.exports = {

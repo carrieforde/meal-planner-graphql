@@ -1,5 +1,4 @@
 const {
-  getCollection,
   getLatestList,
   getDocument,
   getOrderedCatalog,
@@ -20,20 +19,24 @@ const resolvers = {
       const { name, category, defaultUnit = null } = args.input;
 
       try {
-        const catalog = await addItemToCatalog({ name, category, defaultUnit });
+        const catalogItem = await addItemToCatalog({
+          name,
+          category,
+          defaultUnit,
+        });
 
         return {
           code: 200,
           success: true,
           message: `${name} successfully added to catalog`,
-          catalog,
+          catalogItem,
         };
       } catch (err) {
         return {
-          code: err.extensions.response.status,
+          code: 403,
           success: false,
-          message: err.extensions.response.body,
-          catalog: null,
+          message: err.message,
+          catalogItem: null,
         };
       }
     },
