@@ -27,6 +27,7 @@ const typeDefs = gql`
   }
 
   type CatalogItem {
+    id: String!
     name: String!
     category: String!
     defaultUnit: String
