@@ -116,7 +116,7 @@ it("adds item to category list", async () => {
         code\
         success,\
         message,\
-        catalog {name, category, defaultUnit}, \
+        catalogItem {id, name, category, defaultUnit}, \
       }}",
     variables: {
       item: { name: "test_item", category: "test_category", defaultUnit: null },
@@ -125,7 +125,7 @@ it("adds item to category list", async () => {
   expect(res.errors).toBeUndefined();
   expect(res.data).toEqual({
     addCatalogItem: {
-      catalog: null,
+      catalogItem: null,
       code: 200,
       message: "test_item successfully added to catalog",
       success: true,
