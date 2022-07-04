@@ -32,10 +32,10 @@ async function getResolvers(
           };
         } catch (err) {
           return {
-            code: err.extensions.response.status,
+            code: 403,
             success: false,
-            message: err.extensions.response.body,
-            catalog: null,
+            message: err.message,
+            catalogItem: null,
           };
         }
       },
