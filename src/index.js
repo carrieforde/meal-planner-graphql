@@ -1,14 +1,25 @@
 require("dotenv").config();
 const { ApolloServer } = require("apollo-server-cloud-functions");
 const typeDefs = require("./schema");
-const resolvers = require("./resolvers");
+const { getResolvers } = require("./resolvers");
+const {
+  getLatestList,
+  getDocument,
+  getOrderedCatalog,
+  addItemToCatalog,
+} = require("./service");
 const mocks = require("./mocks");
 
+const resolvers = await getResolvers(
+  getOrderedCatalog,
+  getLatestList,
+  addItemToCatalog,
+  getDocument
+);
+
 const server = new ApolloServer({
-  typeDefs,
-  // mocks,
-  // mockEntireSchema: false,
-  resolvers,
+  typeDefs: typeDefs,
+  resolvers: resolvers,
   csrfPrevention: true,
   cache: "bounded",
 });

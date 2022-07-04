@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsc -w --outDir build",
     "start": "nodemon src/index",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --coverage --silent=false"
   },
   "keywords": [],
   "author": "",
@@ -29,6 +29,7 @@
     "eslint-plugin-jest": "^26.5.3",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-testing-library": "^5.5.1",
+    "jest": "^28.1.2",
     "nodemon": "^2.0.18",
     "prettier": "^2.7.1",
     "typescript": "^4.7.4"

@@ -1,63 +1,72 @@
-const {
-  getLatestList,
-  getDocument,
-  getOrderedCatalog,
-  addItemToCatalog,
-} = require("./service");
-
-const resolvers = {
-  Query: {
-    catalog: async () => {
-      return await getOrderedCatalog();
+async function getResolvers(
+  getOrderedCatalogFn,
+  latestListFn,
+  addItemToCatalogFn,
+  getDocumentFn
+) {
+  const revolvers_impl = {
+    Query: {
+      catalog: async () => {
+        return await getOrderedCatalogFn();
+      },
+      list: async () => {
+        return await latestListFn();
+      },
     },
-    list: async () => {
-      return await getLatestList();
-    },
-  },
-  Mutation: {
-    addCatalogItem: async (_, args) => {
-      const { name, category, defaultUnit = null } = args.input;
+    Mutation: {
+      addCatalogItem: async (_, args) => {
+        const { name, category, defaultUnit = null } = args.input;
 
-      try {
-        const catalogItem = await addItemToCatalog({
-          name,
-          category,
-          defaultUnit,
-        });
+        try {
+          const catalog = await addItemToCatalogFn({
+            name,
+            category,
+            defaultUnit,
+          });
 
-        return {
-          code: 200,
-          success: true,
-          message: `${name} successfully added to catalog`,
-          catalogItem,
-        };
-      } catch (err) {
-        return {
-          code: 403,
-          success: false,
-          message: err.message,
-          catalogItem: null,
-        };
-      }
+          return {
+            code: 200,
+            success: true,
+            message: `${name} successfully added to catalog`,
+            catalog,
+          };
+        } catch (err) {
+          return {
+            code: err.extensions.response.status,
+            success: false,
+            message: err.extensions.response.body,
+            catalog: null,
+          };
+        }
+      },
     },
-  },
-  List: {
-    items: async ({ items }) => {
-      const itemsToQuery = await items.map((el) =>
-        getDocument("catalog", el.item)
-      );
+    List: {
+      items: async ({ items }) => {
+        const itemsToQuery = await items.map((el) =>
+          getDocumentFn("catalog", el.item)
+        );
+
+        const result = await Promise.all(itemsToQuery);
 
       const result = await Promise.all(itemsToQuery);
+        const mappedResults = items.map(({ item, quantityNeeded, unit }) => {
+          const found = result.find((res) => res.id === item);
 
       const mappedResults = items.map(({ item, quantityNeeded, unit }) => {
         const found = result.find((res) => res.id === item);
 
         return { item: { ...found }, quantityNeeded, unit };
       });
+          return { item: { ...found }, quantityNeeded, unit };
+        });
 
       return mappedResults;
+        return mappedResults;
+      },
     },
-  },
-};
+  };
 
-module.exports = resolvers;
+  return revolvers_impl;
+}
+
+module.exports = { getResolvers };
