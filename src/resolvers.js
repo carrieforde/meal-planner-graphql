@@ -48,19 +48,12 @@ async function getResolvers(
 
         const result = await Promise.all(itemsToQuery);
 
-      const result = await Promise.all(itemsToQuery);
         const mappedResults = items.map(({ item, quantityNeeded, unit }) => {
           const found = result.find((res) => res.id === item);
 
-      const mappedResults = items.map(({ item, quantityNeeded, unit }) => {
-        const found = result.find((res) => res.id === item);
-
-        return { item: { ...found }, quantityNeeded, unit };
-      });
           return { item: { ...found }, quantityNeeded, unit };
         });
 
-      return mappedResults;
         return mappedResults;
       },
     },
