@@ -1,5 +1,17 @@
 require("dotenv").config();
-const { ApolloServer } = require("apollo-server-cloud-functions");
+
+googleCloud = process.env.MENU_PLANNER_GOOGLE_CLOUD == "TRUE" ? true : false;
+
+function getServerDeps() {
+  if (googleCloud) {
+    return require("./index_cloud");
+  } else {
+    return require("./index_local");
+  }
+}
+
+const { startService } = getServerDeps();
+
 const typeDefs = require("./schema");
 const { getResolvers } = require("./resolvers");
 const {
@@ -9,27 +21,29 @@ const {
   addItemToCatalog,
 } = require("./service");
 const mocks = require("./mocks");
+const { servicesVersion } = require("typescript");
 
-const resolvers = await getResolvers(
-  getOrderedCatalog,
-  getLatestList,
-  addItemToCatalog,
-  getDocument
-);
+async function startApolloService() {
+  const resolvers = await getResolvers(
+    getOrderedCatalog,
+    getLatestList,
+    addItemToCatalog,
+    getDocument
+  );
 
-const server = new ApolloServer({
-  typeDefs: typeDefs,
-  resolvers: resolvers,
-  csrfPrevention: true,
-  cache: "bounded",
-});
+  return startService(resolvers);
+}
 
-// server.listen().then(() => {
-//   console.log(`
-//         🚀 Server is running!
-//         🔊 Listening on port 4000
-//         📭 Query at https://studio.apollographql.com/dev
-//     `);
-// });
+const server = startApolloService();
 
-exports.handler = server.createHandler();
+if (googleCloud) {
+  exports.handler = server.createHandler();
+} else {
+  server.then(() => {
+    console.log(`
+        🚀 Server is running!
+        🔊 Listening on port 4000
+        📭 Query at https://studio.apollographql.com/dev
+    `);
+  });
+}
