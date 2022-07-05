@@ -64,7 +64,7 @@ it("fetches shopping list", async () => {
     variables: {},
   });
   expect(res.errors).toBeUndefined();
-  expect(res.data).toEqual({
+  expect(res.data).toMatchObject({
     list: {
       createdAt: "2022-07-02T03:53:56.122Z",
       items: [
