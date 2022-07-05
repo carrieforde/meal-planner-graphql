@@ -37,7 +37,6 @@ it("fetches category list", async () => {
   });
   expect(res.errors).toBeUndefined();
   expect(res.data).toEqual({
-    // data: {
     catalog: [
       { name: "avocado", category: "PRODUCE", defaultUnit: null },
       { name: "bacon", category: "MEAT", defaultUnit: "" },
@@ -61,7 +60,6 @@ it("fetches shopping list", async () => {
               updatedAt
             }
           }`,
-    variables: {},
   });
   expect(res.errors).toBeUndefined();
   expect(res.data).toMatchObject({
