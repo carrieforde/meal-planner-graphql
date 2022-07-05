@@ -7,7 +7,7 @@
     "dev": "tsc -w --outDir build",
     "start": "nodemon src/index",
     "test": "jest --coverage --silent=false",
-    "test:ci": "jest --ci --reporters='default' --reporters='./github-actions-reporter'"
+    "test:ci": "jest --ci --maxWorkers=2 --coverage --testResultsProcessor jest-sonar-reporter"
   },
   "keywords": [],
   "author": "",
