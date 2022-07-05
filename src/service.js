@@ -5,6 +5,7 @@ const firestore = new Firestore();
 const collections = {
   CATALOG: "catalog",
   LISTS: "lists",
+  ITEMS: "items",
 };
 
 async function getCollection(collectionName) {
@@ -58,17 +59,50 @@ async function addItemToCatalog(item) {
   return { id: document.id, ...document.data() };
 }
 
+async function getListItems(listId) {
+  const collection = await firestore
+    .doc(`${collections.LISTS}/${listId}`)
+    .collection(collections.ITEMS)
+    .get();
+
+  return collection.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+}
+
 async function addItemToCart(itemId) {
   const list = await getLatestList();
-  const items = list.items.map((listItem) =>
-    listItem.item === itemId ? { ...listItem, inCart: true } : listItem
+  const path = `${collections.LISTS}/${list.id}/${collections.ITEMS}/${itemId}`;
+
+  await firestore.doc(path).update({ inCart: true });
+
+  const document = await firestore.doc(path).get();
+
+  return { id: document.id, ...document.data() };
+}
+
+async function addItemToList({ itemId, quantityNeeded, unit = null }) {
+  const list = await getLatestList();
+
+  const itemInCollection = await firestore
+    .collection(`${collections.LISTS}/${list.id}/${collections.ITEMS}`)
+    .get();
+
+  const itemAlreadyOnList = itemInCollection.docs.some(
+    (doc) => doc.data().itemId === itemId
   );
 
-  await firestore.doc(`${collections.LISTS}/${list.id}`).update({ items });
+  if (itemAlreadyOnList) {
+    const item = await getDocument(collections.CATALOG, itemId);
+    throw new Error(`${item.name} already on list`);
+  }
 
-  const updatedList = await getLatestList();
+  const collection = await firestore
+    .doc(`${collections.LISTS}/${list.id}`)
+    .collection(collections.ITEMS)
+    .add({ itemId, quantityNeeded, unit });
 
-  return updatedList.items.find((listItem) => listItem.item === itemId);
+  const document = await firestore.doc(collection.path).get();
+
+  return { id: document.id, ...document.data() };
 }
 
 module.exports = {
@@ -78,4 +112,6 @@ module.exports = {
   getOrderedCatalog,
   addItemToCatalog,
   addItemToCart,
+  getListItems,
+  addItemToList,
 };

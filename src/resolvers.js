@@ -4,6 +4,8 @@ const {
   getOrderedCatalog,
   addItemToCatalog,
   addItemToCart,
+  getListItems,
+  addItemToList,
 } = require("./service");
 
 const resolvers = {
@@ -44,6 +46,7 @@ const resolvers = {
     addItemToCart: async (_, { itemId }) => {
       try {
         const result = await addItemToCart(itemId);
+        console.log(result);
 
         return {
           code: 200,
@@ -60,29 +63,46 @@ const resolvers = {
         };
       }
     },
+    addItemToList: async (_, args) => {
+      try {
+        const result = await addItemToList(args.input);
+
+        return {
+          code: 200,
+          success: true,
+          message: `Item successfully added to list`,
+          item: result,
+        };
+      } catch (err) {
+        return {
+          code: 403,
+          success: false,
+          message: err.message,
+          item: null,
+        };
+      }
+    },
   },
   List: {
-    items: async ({ items }) => {
-      const itemsToQuery = await items.map((el) =>
-        getDocument("catalog", el.item)
-      );
+    items: async ({ id }) => {
+      const items = await getListItems(id);
+
+      const itemsToQuery = items.map((el) => getDocument("catalog", el.itemId));
 
       const result = await Promise.all(itemsToQuery);
 
-      const mappedResults = items.map(
-        ({ item, quantityNeeded, unit, id, inCart }) => {
-          const found = result.find((res) => res.id === item);
-          return { id, item: found, quantityNeeded, unit, inCart };
-        }
-      );
+      const mappedResults = items.map(({ itemId, ...item }) => {
+        const found = result.find((res) => res.id === itemId);
+        return { catalogId: found.id, ...found, ...item };
+      });
 
       return mappedResults;
     },
   },
   AddItemToCartResponse: {
     item: async ({ item }) => {
-      const catalogItem = await getDocument("catalog", item.item);
-      return { ...item, item: catalogItem };
+      const catalogItem = await getDocument("catalog", item.itemId);
+      return { catalogId: catalogItem.id, ...catalogItem, ...item };
     },
   },
 };
