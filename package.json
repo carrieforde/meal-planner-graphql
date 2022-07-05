@@ -6,14 +6,17 @@
   "scripts": {
     "dev": "tsc -w --outDir build",
     "start": "nodemon src/index",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --coverage --silent=false",
+    "test:ci": "jest --ci --maxWorkers=2 --coverage --testResultsProcessor jest-sonar-reporter"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@google-cloud/firestore": "^5.0.2",
+    "@google-cloud/functions": "^2.1.0",
     "apollo-server": "^3.9.0",
+    "apollo-server-cloud-functions": "^3.9.0",
     "dotenv": "^16.0.1",
     "firebase": "^9.8.4",
     "firebase-admin": "^11.0.0",
@@ -27,6 +30,8 @@
     "eslint-plugin-jest": "^26.5.3",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-testing-library": "^5.5.1",
+    "jest": "^28.1.2",
+    "jest-sonar-reporter": "^2.0.0",
     "nodemon": "^2.0.18",
     "prettier": "^2.7.1",
     "typescript": "^4.7.4"
