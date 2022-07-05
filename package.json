@@ -7,7 +7,7 @@
     "dev": "tsc -w --outDir build",
     "start": "nodemon src/index",
     "test": "jest --coverage --silent=false",
-    "test:ci": "jest --ci --reporters='default' --reporters='./github-actions-reporter'"
+    "test:ci": "jest --ci --maxWorkers=2 --coverage --testResultsProcessor jest-sonar-reporter"
   },
   "keywords": [],
   "author": "",
@@ -31,6 +31,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-testing-library": "^5.5.1",
     "jest": "^28.1.2",
+    "jest-sonar-reporter": "^2.0.0",
     "nodemon": "^2.0.18",
     "prettier": "^2.7.1",
     "typescript": "^4.7.4"
