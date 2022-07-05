@@ -3,7 +3,7 @@ const { ApolloServer } = require("apollo-server");
 
 // const { verify } = require("./auth");
 
-async function startService(resolvers) {
+async function startService(typeDefs, resolvers) {
   const server = new ApolloServer({
     typeDefs,
     resolvers,

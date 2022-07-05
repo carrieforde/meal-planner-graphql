@@ -30,10 +30,9 @@ beforeAll(() => {
 it("fetches category list", async () => {
   // create a test server to test against, using our production typeDefs and resolvers
   const res = await server.executeOperation({
-    query:
-      "query TestQuery {\
-              catalog {name, category, defaultUnit}\
-            }",
+    query: `query TestQuery {
+              catalog {name, category, defaultUnit}
+            }`,
     variables: {},
   });
   expect(res.errors).toBeUndefined();
@@ -48,21 +47,20 @@ it("fetches category list", async () => {
 
 it("fetches shopping list", async () => {
   const res = await server.executeOperation({
-    query:
-      "query TestQuery {\
-            list { \
-              items {\
-                item {\
-                  name,\
-                  category\
-                }, \
-                quantityNeeded, \
-                unit\
-              }, \
-              createdAt, \
-              updatedAt \
-            }\
-          }",
+    query: `query TestQuery {
+            list {
+              items {
+                item {
+                  name,
+                  category
+                },
+                quantityNeeded,
+                unit
+              },
+              createdAt,
+              updatedAt
+            }
+          }`,
     variables: {},
   });
   expect(res.errors).toBeUndefined();
@@ -111,13 +109,12 @@ it("fetches shopping list", async () => {
 it("adds item to category list", async () => {
   // create a test server to test against, using our production typeDefs and resolvers
   const res = await server.executeOperation({
-    query:
-      "mutation addCatalogItem($item: CatalogInputItem!) {  addCatalogItem(input: $item) { \
-        code\
-        success,\
-        message,\
-        catalogItem {id, name, category, defaultUnit}, \
-      }}",
+    query: `mutation addCatalogItem($item: CatalogInputItem!) {  addCatalogItem(input: $item) {
+        code
+        success,
+        message,
+        catalogItem {id, name, category, defaultUnit},
+      }}`,
     variables: {
       item: { name: "test_item", category: "test_category", defaultUnit: null },
     },

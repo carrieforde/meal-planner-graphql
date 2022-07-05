@@ -23,7 +23,7 @@ const {
 const mocks = require("./mocks");
 const { servicesVersion } = require("typescript");
 
-async function startApolloService() {
+async function startApolloService(typeDefs) {
   const resolvers = await getResolvers(
     getOrderedCatalog,
     getLatestList,
@@ -31,10 +31,10 @@ async function startApolloService() {
     getDocument
   );
 
-  return startService(resolvers);
+  return startService(typeDefs, resolvers);
 }
 
-const server = startApolloService();
+const server = startApolloService(typeDefs);
 
 if (googleCloud) {
   exports.handler = server.createHandler();

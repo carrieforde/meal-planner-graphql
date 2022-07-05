@@ -4,7 +4,7 @@ require("dotenv").config();
 
 const { ApolloServer } = require("apollo-server-cloud-functions");
 
-async function startService(resolvers) {
+async function startService(typeDefs, resolvers) {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
